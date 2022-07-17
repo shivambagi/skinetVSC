@@ -29,5 +29,19 @@ namespace API.Controllers
         {
             return await _repo.GetProductByIdAsync(id);
         }
+
+        [HttpGet("brands")]
+        public async Task<ActionResult<List<ProductBrand>>> GetProductBrands()
+        {
+            // .net core does not allow to retun Ireadonlylist directly, it needs to be wrapped in OK()
+            return Ok(await _repo.GetProductBrandsAsync());
+        }
+
+        [HttpGet("types")]
+        public async Task<ActionResult<List<ProductType>>> GetProductTypes()
+        {
+            // .net core does not allow to retun Ireadonlylist directly, it needs to be wrapped in OK()
+            return Ok(await _repo.GetProductTypesAsync());
+        }
     }
 }

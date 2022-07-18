@@ -6,14 +6,14 @@ namespace Infrastructure.Data
 {
     public class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
     {
-        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery,
+        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, //inputquery will be the IQueryable object like products
             ISpecifications<TEntity> spec)        
         {
-            var query = inputQuery;
+            var query = inputQuery; // store that object in query
 
             if(spec.Criteria != null)
             {
-                query = query.Where(spec.Criteria);
+                query = query.Where(spec.Criteria); // this will be the expression for criteria
             }
 
             //**** will generate include statements, aggregate them and pass them into query

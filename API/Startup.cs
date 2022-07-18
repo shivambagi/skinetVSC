@@ -1,3 +1,4 @@
+using API.Helpers;
 using Core.Interfaces;
 using Infrastructure;
 using Infrastructure.Data;
@@ -23,6 +24,8 @@ namespace API
             //**** AS we dont know which Generic class is ging to be used we a different way of injecting dependency
             services.AddScoped(typeof(IGenericRepository<>),(typeof(GenericRepository<>)));
             
+            services.AddAutoMapper(typeof(MappingProfiles));
+
             services.AddControllers();
             services.AddDbContext<StoreContext>(x => 
                      x.UseSqlite(_config.GetConnectionString("DefaultConnection")));

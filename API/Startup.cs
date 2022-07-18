@@ -52,6 +52,8 @@ namespace API
 
             app.UseRouting();
 
+            app.UseStaticFiles(); //Middleware for serving static files like images
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

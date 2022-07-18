@@ -20,6 +20,9 @@ namespace API
         {
             services.AddScoped<IProductRepository,ProductRepository>();
             
+            //**** AS we dont know which Generic class is ging to be used we a different way of injecting dependency
+            services.AddScoped(typeof(IGenericRepository<>),(typeof(GenericRepository<>)));
+            
             services.AddControllers();
             services.AddDbContext<StoreContext>(x => 
                      x.UseSqlite(_config.GetConnectionString("DefaultConnection")));

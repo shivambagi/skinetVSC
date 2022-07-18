@@ -1,10 +1,7 @@
-using API.Errors;
+using API.Extensions;
 using API.Helpers;
 using API.Middleware;
-using Core.Interfaces;
-using Infrastructure;
 using Infrastructure.Data;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -21,56 +18,24 @@ namespace API
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddScoped<IProductRepository,ProductRepository>();
-            
-            //**** AS we dont know which Generic class is ging to be used we a different way of injecting dependency
-            services.AddScoped(typeof(IGenericRepository<>),(typeof(GenericRepository<>)));
-            
+        {   
             services.AddAutoMapper(typeof(MappingProfiles));
 
             services.AddControllers();
             services.AddDbContext<StoreContext>(x => 
                      x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
-            // services.AddDbContext<StoreContext>(x => 
-            //         x.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
+            
+            services.AddApplicationServices();
 
-            services.Configure<ApiBehaviorOptions>(options => 
-            {
-                options.InvalidModelStateResponseFactory = actionContext => 
-                {
-                    var errors = actionContext.ModelState
-                        .Where(e => e.Value.Errors.Count > 0)
-                        .SelectMany(x => x.Value.Errors)
-                        .Select(x => x.ErrorMessage).ToArray();
+            services.AddSwaggerDocumentation();
 
-                    var errorResponse = new ApiValidationErrorResponse
-                    {
-                        Errors = errors
-                    };
-
-                    return new BadRequestObjectResult(errorResponse);
-                };
-            });
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-            });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseMiddleware<ExceptionMiddleware>();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
-
-            if (env.IsDevelopment())
-            {
-                //app.UseDeveloperExceptionPage();                
-            }
 
             app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
@@ -81,6 +46,8 @@ namespace API
             app.UseStaticFiles(); //Middleware for serving static files like images
 
             app.UseAuthorization();
+
+            app.UseSwaggerDocumentation();
 
             app.UseEndpoints(endpoints =>
             {

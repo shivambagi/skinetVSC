@@ -16,6 +16,17 @@ namespace Infrastructure.Data
                 query = query.Where(spec.Criteria); // this will be the expression for criteria
             }
 
+            if(spec.OrderBy != null)
+            {
+                query = query.OrderBy(spec.OrderBy); 
+            }
+
+            if(spec.OrderByDescending != null)
+            {
+                query = query.OrderByDescending(spec.OrderByDescending); 
+            }
+
+
             //**** will generate include statements, aggregate them and pass them into query
             //**** it is an IQueryable which going to get passed to list
             query = spec.Includes.Aggregate(query,(current,include) => current.Include(include));
